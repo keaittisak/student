@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ระบบกรอกคะแนนนักเรียน</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="เมนูหลัก">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 48 48" role="img">
+              <path d="M8 14.5 24 7l16 7.5L24 22 8 14.5Z" />
+              <path d="M13 20v9.5c0 4.2 4.9 7.5 11 7.5s11-3.3 11-7.5V20" />
+              <path d="M40 15v13" />
+            </svg>
+          </div>
+          <div>
+            <p class="eyebrow">ClassScore</p>
+            <h1>คะแนนเก็บ</h1>
+          </div>
+        </div>
+
+        <nav class="nav-tabs" aria-label="หน้าใช้งาน">
+          <button class="nav-tab active" data-page="dashboard" type="button">
+            <span class="icon" aria-hidden="true">▦</span>
+            <span>สรุปคะแนน</span>
+          </button>
+          <button class="nav-tab" data-page="entry" type="button">
+            <span class="icon" aria-hidden="true">✎</span>
+            <span>กรอกส่งงาน</span>
+          </button>
+        </nav>
+
+        <div class="term-box">
+          <label for="term-input">ภาคเรียน</label>
+          <input id="term-input" type="text" placeholder="เช่น 1/2569" />
+          <small>บันทึกอัตโนมัติในเครื่องนี้</small>
+        </div>
+      </aside>
+
+      <main>
+        <section id="dashboard-page" class="page active" aria-labelledby="dashboard-title">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">ภาพรวมรายห้อง</p>
+              <h2 id="dashboard-title">สรุปคะแนนเก็บ</h2>
+            </div>
+            <div class="toolbar">
+              <label class="search">
+                <span aria-hidden="true">⌕</span>
+                <input id="summary-search" type="search" placeholder="ค้นหาชื่อนักเรียน" />
+              </label>
+              <button id="export-csv" class="secondary-btn" type="button" title="ส่งออก CSV">
+                <span aria-hidden="true">⇩</span>
+                CSV
+              </button>
+              <button id="reset-data" class="danger-action" type="button" title="รีเซ็ตคะแนนทั้งหมด">
+                <span aria-hidden="true">↺</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="stats-grid" aria-label="สถิติคะแนน">
+            <article class="stat">
+              <span>นักเรียนทั้งหมด</span>
+              <strong id="student-count">0</strong>
+              <small>คน</small>
+            </article>
+            <article class="stat">
+            <span>คะแนนเฉลี่ย</span>
+            <strong id="average-score">0</strong>
+            <small>จาก <span id="total-max-a">0</span></small>
+          </article>
+          <article class="stat">
+            <span>ส่งทันเวลา</span>
+            <strong id="complete-count">0</strong>
+            <small>รายการ</small>
+          </article>
+          <article class="stat warn">
+            <span>ส่งช้า/ยังไม่ส่ง</span>
+            <strong id="follow-count">0</strong>
+            <small>รายการที่ต้องตรวจสอบ</small>
+          </article>
+          </div>
+
+          <div class="summary-layout">
+            <section class="panel score-table-panel" aria-labelledby="table-title">
+              <div class="panel-head">
+                <div>
+                  <h3 id="table-title">ตารางคะแนนรวม</h3>
+                  <p>เรียงจากคะแนนรวมมากไปน้อย</p>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead id="summary-head"></thead>
+                  <tbody id="summary-body"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="panel insight-panel" aria-labelledby="insight-title">
+              <div class="panel-head">
+                <div>
+                  <h3 id="insight-title">จังหวะเวลาส่งงาน</h3>
+                  <p>อิงจากเวลาส่งจริงของนักเรียน</p>
+                </div>
+              </div>
+              <div id="assignment-insights" class="insight-list"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="entry-page" class="page" aria-labelledby="entry-title">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">สำหรับอาจารย์</p>
+              <h2 id="entry-title">กรอกเวลาส่งงานจริง</h2>
+            </div>
+            <div class="toolbar">
+              <button id="add-student" class="primary-btn" type="button">
+                <span aria-hidden="true">＋</span>
+                เพิ่มนักเรียน
+              </button>
+              <button id="add-assignment" class="primary-btn" type="button">
+                <span aria-hidden="true">＋</span>
+                เพิ่มงาน
+              </button>
+            </div>
+          </div>
+
+          <section class="panel controls-panel" aria-label="ตัวเลือกการกรอกเวลาส่งงาน">
+            <div class="control-group">
+              <label for="assignment-title-input">งานที่ต้องการกรอก</label>
+              <input id="assignment-title-input" type="text" placeholder="เช่น ใบงานท้ายคาบ" />
+            </div>
+            <div class="control-group">
+              <label for="assignment-max-input">คะแนนเต็ม</label>
+              <input id="assignment-max-input" type="number" min="1" max="100" />
+            </div>
+            <div class="control-group">
+              <label for="assignment-duration-input">เวลาที่ให้ทำ (นาที)</label>
+              <input id="assignment-duration-input" type="number" min="1" max="600" />
+            </div>
+            <div class="control-group">
+              <label for="assignment-deadline-input">เวลาสิ้นสุดอัตโนมัติ</label>
+              <input id="assignment-deadline-input" type="datetime-local" step="1" readonly />
+            </div>
+            <div class="control-group">
+              <label for="entry-search">ค้นหานักเรียน</label>
+              <input id="entry-search" type="search" placeholder="พิมพ์ชื่อหรือเลขที่" />
+            </div>
+            <div class="control-group">
+              <label for="status-filter">สถานะ</label>
+              <select id="status-filter">
+                <option value="all">ทั้งหมด</option>
+                <option value="on-time">ส่งทันเวลา</option>
+                <option value="late">ส่งช้า</option>
+                <option value="missing">ยังไม่ส่ง</option>
+              </select>
+            </div>
+          </section>
+
+          <section class="timer-panel" aria-label="เวลางานที่กำลังทำ">
+            <div>
+              <span>เวลาปัจจุบัน</span>
+              <strong id="live-clock">--:--:--</strong>
+            </div>
+            <div>
+              <span>เวลาเริ่ม</span>
+              <strong id="timer-start">ยังไม่เริ่ม</strong>
+            </div>
+            <div>
+              <span>สิ้นสุด</span>
+              <strong id="timer-end">ยังไม่กำหนด</strong>
+            </div>
+            <div>
+              <span>เวลาคงเหลือ</span>
+              <strong id="timer-remaining">--</strong>
+            </div>
+            <button id="start-assignment" class="primary-btn" type="button">
+              <span aria-hidden="true">▶</span>
+              เริ่มงาน
+            </button>
+            <button id="reset-assignment" class="danger-action wide" type="button">
+              <span aria-hidden="true">↺</span>
+              รีเซ็ต
+            </button>
+          </section>
+
+          <section class="panel entry-panel" aria-labelledby="entry-table-title">
+            <div class="panel-head">
+              <div>
+                <h3 id="entry-table-title">รายชื่อนักเรียน</h3>
+                <p id="assignment-meta">กรอกงานและบันทึกเวลาส่งจริง</p>
+              </div>
+              <div class="toolbar">
+                <button id="mark-all-submitted" class="ghost-btn wide" type="button">
+                  <span aria-hidden="true">✓</span>
+                  ใส่เวลาปัจจุบันทั้งหมด
+                </button>
+              </div>
+            </div>
+            <div id="entry-list" class="entry-list"></div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="student-dialog">
+      <form method="dialog" class="dialog-card">
+        <h3>เพิ่มนักเรียน</h3>
+        <label>
+          เลขที่
+          <input id="new-student-no" type="number" min="1" required />
+        </label>
+        <label>
+          ชื่อนักเรียน
+          <input id="new-student-name" type="text" required />
+        </label>
+        <menu>
+          <button value="cancel" class="ghost-btn" type="submit">ยกเลิก</button>
+          <button id="save-student" value="default" class="primary-btn" type="button">บันทึก</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <script src="app.js"></script>
+  </body>
+</html>
